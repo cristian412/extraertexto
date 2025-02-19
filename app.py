@@ -6,6 +6,11 @@ from io import BytesIO
 
 app = Flask(__name__)
 
+@app.route("/hello", methods=["GET"])
+def hello_world():
+    return jsonify({"mensaje": "¡Hola, mundo!"})
+    
+
 @app.route("/procesar", methods=["POST"])
 def procesar():
     # Recibe la URL de la imagen
