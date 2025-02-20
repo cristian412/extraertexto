@@ -12,7 +12,7 @@ def hello_world():
     return jsonify({"mensaje": "¡Hola, mundo!"})
 
 
-@app.route("/test", methods=["POST"])
+@app.route("/test", methods=["GET"])
     
     # Texto de ejemplo
     test_texto = """
