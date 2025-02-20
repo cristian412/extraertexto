@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 import requests
-import pytesseract
 from PIL import Image
 from io import BytesIO
-from g4f.client import Client
+import pytesseract
+from openai import Client
 
 app = Flask(__name__)
 
@@ -69,6 +69,16 @@ def procesar():
     try:
         # Descargar la imagen
         response = requests.get(imagen_url)
+        
+        # Verificar que la respuesta fue exitosa y que el contenido es una imagen
+        if response.status_code != 200:
+            return jsonify({"error": "No se pudo descargar la imagen. Código de estado: " + str(response.status_code)}), 400
+        
+        # Verificar el tipo de contenido
+        if "image" not in response.headers.get("Content-Type", ""):
+            return jsonify({"error": "La URL proporcionada no apunta a una imagen válida."}), 400
+        
+        # Intentar abrir la imagen
         image = Image.open(BytesIO(response.content))
         
         # Extraer texto con OCR
@@ -101,7 +111,8 @@ def procesar():
         return jsonify({"respuesta": response.choices[0].message.content})
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Error al procesar la imagen: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
