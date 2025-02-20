@@ -13,7 +13,7 @@ def hello_world():
 
 
 @app.route("/test", methods=["GET"])
-    
+def test():
     # Texto de ejemplo
     test_texto = f"""
     EL OFICIAL DE JUSTICIA, a quien fuere entregado el presente mandamiento de INTIMACIÓN DE PAGO Y EMBARGO EJECUTIVO, acompañado de un Escribano Público o en su d
