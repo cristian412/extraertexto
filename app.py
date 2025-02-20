@@ -75,13 +75,37 @@ def procesar():
         # Extraer texto con OCR
         texto = pytesseract.image_to_string(image)
         
-        # Simulación de procesamiento del texto
-        resultado = {"texto_extraido": texto, "mensaje": "Procesamiento exitoso"}
-        
-        # Enviar resultados a tu backend (simulado)
-        requests.post("https://tu-backend.com/api/guardar", json=resultado)
-        
-        return jsonify(resultado)
+        # # Simulación de procesamiento del texto
+        # resultado = {"texto_extraido": texto, "mensaje": "Procesamiento exitoso"}
+        # # Enviar resultados a tu backend (simulado)
+        # requests.post("https://tu-backend.com/api/guardar", json=resultado)
+        # return jsonify(resultado)
+
+        client = Client()
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                        {"role": "user", "content": f"""
+                            Extraé los siguientes datos del mandamiento:
+                            - Nombre del afectado
+                            - Cédula de identidad
+                            - Domicilio
+                            - Tipo de acción (Ej: embargo, notificación, etc.)
+                            - Juzgado interviniente
+                            - caratula
+                            - monto
+                            - gastos de justicia
+
+                            Texto del mandamiento:
+                            {texto}
+                            
+                            Formateá la respuesta en JSON con las claves 'nombre', 'cedula_identidad','domicilio', 'accion', 'caratula', 'monto','gastos_justicia','juzgado_interviniente'.
+                        """}
+
+            ],
+            web_search=False
+        )
+        return response.choices[0].message.content
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
